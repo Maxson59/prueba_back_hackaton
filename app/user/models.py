@@ -4,6 +4,17 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
+import os
+import uuid
+
+
+def user_image_file_path(instance, filename):
+    """ Generate file path for user profile image. """
+
+    extension = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{extension}'
+
+    return os.path.join('uploads', 'user', filename)
 
 
 class UserManager(BaseUserManager):
@@ -38,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     nombre = models.CharField(max_length=255)
     primer_apellido = models.CharField(max_length=255)
+    imagen = models.ImageField(null=True, upload_to=user_image_file_path)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
