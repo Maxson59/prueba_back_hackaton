@@ -10,11 +10,14 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = [
+            'id',
             'email',
             'password',
             'nombre',
-            'primer_apellido'
+            'primer_apellido',
+            'imagen',
         ]
+        read_only_fields = ['id', 'imagen']
         extra_kwargs = {
             'password': {
                 'write_only': True,
@@ -38,3 +41,23 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class UserMeImageSerializer(serializers.ModelSerializer):
+    """ Serializer for uploading images for auth user. """
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'id',
+            'imagen'
+        ]
+        read_only_fields = ['id']
+
+    def update(self, instance, validated_data):
+        # REMOVE THE PREVIOUS IMAGE IF A NEW IMAGE IS PROVIDED
+        if 'imagen' in validated_data:
+            # DELETE IMAGE
+            instance.imagen.delete()
+
+        return super().update(instance, validated_data)
