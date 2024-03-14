@@ -7,4 +7,4 @@ python manage.py collectstatic --noinput
 python manage.py migrate_schemas
 python manage.py migrate
 
-gunicorn -b 0.0.0.0:8000 -w 4 --threads 2 app.wsgi
+uwsgi --socket :9000 --workers 4 --master --enable-threads --module app.wsgi
